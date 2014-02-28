@@ -1,0 +1,13 @@
+#!/usr/bin/env python
+#
+# Copyrigth SAS Institute, Inc
+#
+
+import sys
+
+
+if __name__ == '__main__':
+    from forester import main
+    sys.exit(main.main(sys.argv))
+
+
