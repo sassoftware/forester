@@ -1,0 +1,22 @@
+* Change command line to be like this
+
+forester clone <forestname>
+
+* Add support for local control.yaml file
+
+forester clone --control control.yaml
+
+* Add support for remote git repo containing control.yaml
+
+forester clone --control git://foo.bar.com/foo.git
+
+
+* Improve error handling as it is non existent 
+
+* Improve help txt
+
+* Write a man page
+
+** Develop a pull mode that pulls if the directory exists
+
+

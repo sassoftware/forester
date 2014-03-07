@@ -1,0 +1,182 @@
+{{lowercase}}
+[[forester]] clones a git forest
+It is one of several [[sandbox development tools for vApps]].
+
+==About==
+
+Clone multiple Git Repos from a single source file. Yet another "for" loop for git. Currently Git Forest must be managed in WMS. Feel free to email contacts for more info.
+
+===How it works===
+
+forester needs conary so it is probably best to use a Sandbox Developers Image to start. see [[ sas-spanner | spanner ]] for information on setting one up.
+
+==Getting  Started==
+
+* Grab conary package 
+** forester=newton.eng.rpath.com@sas:build-tools-master
+* Alternative: Clone the source
+** make && sudo make install 
+* Create a config file
+* Clone a Forest
+
+===Install Forester===
+
+<source lang=bash>
+conary install forester=newton.eng.rpath.com@sas:build-tools-master
+</source>
+
+===Clone the source===
+
+<source lang=bash>
+git clone git://scc.unx.sas.com/forester.git
+
+cd forester/
+
+make
+
+sudo make install
+
+</source>
+
+
+===Create Config===
+
+To create the initial config it is easiest to use the init command.
+
+The init command is non-destructive for forests and will read your current config so you can use it to add more forests.
+
+Run the init command to generate the initial ~/.foresterrc and set some common git aliases. 
+
+<source lang=bash>
+forester init --branch bar --email foo@bar.com --name Joe Foo --wms --wmsbase http://foo.bar.com --wmspath silo/path --subdir ~/git --forest foo --common-aliases
+</source>
+
+Running it a second time with a different forest will add to the config.
+
+<source lang=bash>
+forester init --branch bar --wms --wmsbase http://foo.bar.com --wmspath silo/path --subdir ~/git --forest foo
+</source>
+
+
+
+===Clone packages and branch===
+
+* Currently only supports WMS forests. Future plans to support custom forests. 
+
+<source lang=bash>
+forester clone --forest foobar
+</source>
+
+This command will clone all the repositories in a git forest to the specified subdir in the config file.
+
+===Example===
+
+Add vApp forest to config
+
+<pre>
+forester init --branch master --wms --wmsbase http://wheresmystuff.unx.sas.com --wmspath gitgrid/VirtualApplications/Infrastructure/utilities.ci.bobplans --subdir ~/gittest --forest vapp
+</pre>
+
+Add appengine forest to config
+
+<pre>
+forester init --branch master --wms --wmsbase http://wheresmystuff.unx.sas.com --wmspath scc/appengine --subdir ~/gittest --forest appengine
+</pre>
+
+Add vdk forest to config
+
+<pre>
+forester init --branch master --wms --wmsbase http://wheresmystuff.unx.sas.com --wmspath scc/vdk --subdir ~/gittest --forest vdk
+</pre>
+
+Add build-tools forest to config
+
+<pre>
+forester init --branch master --wms --wmsbase http://wheresmystuff.unx.sas.com --wmspath scc/build-tools --subdir ~/gittest --forest build-tools
+</pre>
+
+
+
+Example config
+<pre>
+# BuildTemplateDisplayNames (Default: )
+# branch (Default: None)
+# configPath (Default: None)
+# customAliases (Default: )
+customAliases             alias.br branch
+customAliases             alias.ci commit
+customAliases             alias.co checkout
+customAliases             alias.last log -1 HEAD
+customAliases             alias.st status
+customAliases             push.default simple
+customAliases             user.email joe.foo@bar.com
+customAliases             user.name Joe Foo
+# debugMode (Default: False)
+debugMode                 False
+# defaultBranch (Default: master)
+defaultBranch             master
+# defaultCacheDir (Default: cachedir)
+defaultCacheDir           /home/joefoo/gittest1/cachedir
+# defaultConfigFile (Default: ~/.foresterrc)
+defaultConfigFile         ~/.foresterrc
+# defaultControlFile (Default: control.yaml)
+defaultControlFile        control.yaml
+# defaultControlType (Default: WMS)
+defaultControlType        WMS
+# defaultControlUri (Default: None)
+defaultControlUri         http://wheresmystuff.unx.sas.com
+# defaultForest (Default: None)
+# defaultSubDir (Default: git)
+defaultSubDir             /home/bsmith/gittest1
+# defaultWmsBase (Default: http://wheresmystuff.unx.sas.com)
+defaultWmsBase            http://wheresmystuff.unx.sas.com
+# lockFile (Default: forester-lock)
+lockFile                  forester-lock
+# logFile (Default: forester.log)
+logFile                   forester.log
+# logging (Default: False)
+logging                   False
+# macros (Default: )
+# override (Default: )
+# testOnly (Default: False)
+testOnly                  False
+# tmpDir (Default: tmp)
+tmpDir                    /home/joefoo/gittest1/tmp
+# useAliases (Default: False)
+useAliases                True
+# userEmail (Default: None)
+userEmail                 joe.foo@bar.com
+# userName (Default: None)
+userName                  Joe Foo
+
+
+[forest:appengine]
+# ForestBranch (Default: None)
+ForestBranch              feldspar
+# ForestCacheDir (Default: None)
+ForestCacheDir            /home/joe/gittest1/cachedir
+# ForestControlFile (Default: None)
+# ForestControlPath (Default: None)
+ForestControlPath         scc/appengine
+# ForestControlType (Default: None)
+ForestControlType         WMS
+# ForestControlUri (Default: None)
+ForestControlUri          http://wheresmystuff.unx.sas.com
+# ForestDescription (Default: None)
+# ForestExcludes (Default: [])
+ForestExcludes            barnacle
+ForestExcludes            flex3p
+# ForestName (Default: None)
+ForestName                appengine
+# ForestSubDir (Default: None)
+# ForestTest (Default: False)
+ForestTest                False
+</pre>
+
+== Contacts ==
+
+Contact [[Brett Smith]] at [mailto:bc.smith@sas.com bc.smith@sas.com] or [[Walter Scheper]] for questions about this tool.
+
+
+[[Category:Sandbox development tools for vApps]]
+

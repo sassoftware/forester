@@ -8,6 +8,6 @@ make install
 
 Config
 
-forester init --branch bar --email foo@bar.com --name Joe Foo --wms --wmsbase http://foo.bar.com --wmspath silo/path --subdir ~/git --forest foo
+forester init --branch bar --email foo@bar.com --name Joe Foo --wms --wmsbase http://foo.bar.com --wmspath silo/path --subdir ~/git --forest foo --common-aliases
 
 forester forest --forest foobar

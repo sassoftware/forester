@@ -32,7 +32,9 @@ extra_files = \
 	Make.defs		\
 	NEWS			\
 	README			\
-	LICENSE
+	LICENSE			\
+	TODO			\
+	WIKI
 
 
 .PHONY: clean dist install subdirs html
