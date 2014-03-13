@@ -69,7 +69,6 @@ class GitMultiClone(git.GitCommands):
                 continue
             local = self.prep(repo.path)
             uri = self.mangleUri(repo.uri)
-            import epdb;epdb.st()
             if os.path.exists(os.path.join(local, '.git')):
                 if self.ask:
                     okay = cmdline.askYn('Dir exists continue with pull? [y/N]', default=False)
