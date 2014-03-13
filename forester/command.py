@@ -155,6 +155,7 @@ class CloneCommand(ForesterCommand):
             'cachedir' : 'Cache directory to use for git checkouts',
             'cfg' : 'Path to forestrc config file',
             'ask' : 'Ask before cloning a git repo',
+            'readonly' : 'Do not mangle read only git repo uri',
             'dry-run' : 'List the head instead of cloning git repo',
             'base' : 'Base url for WMS service',
             'path' : 'Path for the wms forest',
@@ -173,6 +174,7 @@ class CloneCommand(ForesterCommand):
         argDef['cachedir'] = options.ONE_PARAM
         argDef['dry-run'] = options.NO_PARAM
         argDef['ask'] = options.NO_PARAM
+        argDef['read-only'] = options.NO_PARAM
         argDef['base'] = options.ONE_PARAM
         argDef['path'] = options.ONE_PARAM
         argDef['control-file'] = options.ONE_PARAM
@@ -197,6 +199,7 @@ class CloneCommand(ForesterCommand):
         self.controluri = argSet.pop('control-uri', None)
         self.cachedir = argSet.pop('cachedir', None)
         self.ask = argSet.pop('ask', False)
+        self.readonly = argSet.pop('readonly', False)
         self.test = argSet.pop('dry-run', False)
     
         self.forests = params[2:]
@@ -214,6 +217,7 @@ class CloneCommand(ForesterCommand):
                                     path = self.path, 
                                     branch = self.branch, 
                                     ask=self.ask,
+                                    readonly=self.readonly,
                                     test = self.test,
                                 )
             _skid.main()
