@@ -1,7 +1,3 @@
-* Change command line to be like this
-
-forester clone <forestname>
-
 * Add support for local control.yaml file
 
 forester clone --control control.yaml

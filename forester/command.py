@@ -79,6 +79,17 @@ class ConfigCommand(ForesterCommand):
 class InitCommand(ForesterCommand):
     commands = ['init']
     help = 'Init working directories'
+    docs = {'name'  : 'User Name used for git',
+            'email' : 'Email used for git',
+            'common-aliases' : 'Setup common aliases for git',
+            'subdir' : 'Top Level Sub Directory for all git checkouts',
+            'forest' : 'Name of forest to add to the config',
+            'branch' : 'Prefered branch of forest to add to the config',
+            'wms' : 'Set forest as WMS forest',
+            'wmsbase' : 'Base url for WMS service',
+            'wmspath' : 'Path for the wms forest',
+            }
+
 
     def addParameters(self, argDef):
         ForesterCommand.addParameters(self, argDef)
@@ -136,14 +147,29 @@ class InitCommand(ForesterCommand):
 class CloneCommand(ForesterCommand):
     commands = ['clone']
     help = 'Clone git forest from a control source'
+    paramsHelp = '[forest]...'
+    docs = {'forest'  : 'Name of forest in config file',
+            'branch' : 'Branch to checkout',
+            'excludes' : 'Names of git repos to skip in a forest',
+            'subdir' : 'Top Level Sub Directory for all git checkouts',
+            'cachedir' : 'Cache directory to use for git checkouts',
+            'cfg' : 'Path to forestrc config file',
+            'ask' : 'Ask before cloning a git repo',
+            'dry-run' : 'List the head instead of cloning git repo',
+            'base' : 'Base url for WMS service',
+            'path' : 'Path for the wms forest',
+            'control-file' : 'Not implemented yet',
+            'control-uri' : 'Not implemented yet',
+            }
+
+    requireConfig = True
 
     def addParameters(self, argDef):
         ForesterCommand.addParameters(self, argDef)
-        argDef['forest'] = options.ONE_PARAM
         argDef['branch'] = options.ONE_PARAM
         argDef['excludes'] = options.MULT_PARAM
         argDef['cfg'] = options.ONE_PARAM
-        argDef['dir'] = options.ONE_PARAM
+        argDef['subdir'] = options.ONE_PARAM
         argDef['cachedir'] = options.ONE_PARAM
         argDef['dry-run'] = options.NO_PARAM
         argDef['ask'] = options.NO_PARAM
@@ -153,16 +179,15 @@ class CloneCommand(ForesterCommand):
         argDef['control-uri'] = options.ONE_PARAM
 
     def shouldRun(self):
-        if self.forest and self.cfgfile:
-            return True
-        logger.error('forest command requires at least --forest or one --cfgfile')
-        return False
+        if not self.forests:
+            logger.error('forest command requires at least one forest')
+            return False
+        return True
 
 
     def runCommand(self, cfg, argSet, params, **kw):
         self.cfg = cfg
         self.cfgfile = argSet.pop('cfgfile', None)
-        self.forest = argSet.pop('forest', None)
         self.branch = argSet.pop('branch', None)
         self.excludes = argSet.pop('excludes', None)
         self.subdir = argSet.pop('subdir', None)
@@ -173,17 +198,25 @@ class CloneCommand(ForesterCommand):
         self.cachedir = argSet.pop('cachedir', None)
         self.ask = argSet.pop('ask', False)
         self.test = argSet.pop('dry-run', False)
+    
+        self.forests = params[2:]
+
+        
+        if not self.shouldRun():
+            logger.error('clone will not run, exiting.')
+            sys.exit(2)
 
 
-        _skid = skidder.Skidder(forest = self.forest, 
-                                cfgfile= self.cfgfile, 
-                                base = self.base, 
-                                path = self.path, 
-                                branch = self.branch, 
-                                ask=self.ask,
-                                test = self.test,
-                            )
-        _skid.main()
+        for forest in self.forests:
+            _skid = skidder.Skidder(forest = forest, 
+                                    cfgfile= self.cfgfile, 
+                                    base = self.base, 
+                                    path = self.path, 
+                                    branch = self.branch, 
+                                    ask=self.ask,
+                                    test = self.test,
+                                )
+            _skid.main()
 
 
 

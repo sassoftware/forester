@@ -64,10 +64,16 @@ forester init --branch bar --wms --wmsbase http://foo.bar.com --wmspath silo/pat
 * Currently only supports WMS forests. Future plans to support custom forests. 
 
 <source lang=bash>
-forester clone --forest foobar
+forester clone foobar
 </source>
 
 This command will clone all the repositories in a git forest to the specified subdir in the config file.
+
+Example for cloning multiple forests as long as they are setup in config
+
+<source lang=bash>
+forester clone foobar foobaz foobuz
+</source>
 
 ===Example===
 
