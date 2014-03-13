@@ -17,6 +17,7 @@
 
 import errno
 import logging
+import os
 import sys
 
 from conary.lib import log as cny_log
@@ -46,7 +47,14 @@ class ForesterMain(mainhandler.MainHandler):
 
     setSysExcepthook = False
 
+    def mkDirs(self, path):
+        if not os.path.exists(path):
+            os.makedirs(path)
+        assert os.path.exists(path)
+
+
     def configureLogging(self, logFile, debug, quiet):
+        self.mkDirs(os.path.dirname(logFile))
         if debug:
             consoleLevel = logging.DEBUG
             fileLevel = logging.DEBUG
