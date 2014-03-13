@@ -6,7 +6,6 @@ forester clone --control control.yaml
 
 forester clone --control git://foo.bar.com/foo.git
 
-
 * Improve error handling as it is non existent 
 
 * Improve help txt
@@ -15,4 +14,4 @@ forester clone --control git://foo.bar.com/foo.git
 
 ** Develop a pull mode that pulls if the directory exists
 
-
+* Review uri mangling...
