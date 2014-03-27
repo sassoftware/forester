@@ -115,6 +115,7 @@ class ForesterConfiguration(MainConfig):
 
     userName                    = CfgString
     userEmail                   = CfgString
+    gitUserMap                  = CfgDict(CfgString)
     useAliases                  = (cfg.CfgBool, False)
     debugMode                   = (cfg.CfgBool, False)
     testOnly                    = (cfg.CfgBool, False)

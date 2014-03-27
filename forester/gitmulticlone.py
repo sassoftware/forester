@@ -15,7 +15,7 @@ class SimpleGitRepo(namedtuple('gitrepo', 'name branch uri path head')):
     __slots__ = ()
 
 class GitMultiClone(git.GitCommands):
-    def __init__(self, repos, subdir, cachedir, ask=False, readonly=False, test=False):
+    def __init__(self, repos, subdir, cachedir, ask=False, readonly=False, cfg=None, test=False):
         super(GitMultiClone, self).__init__(cachedir)
         self.repos = repos
         self.subdir = subdir
@@ -24,6 +24,7 @@ class GitMultiClone(git.GitCommands):
         self.readonly = readonly
         self.test = test
         self.prepped = False
+        self._cfg = cfg
 
     def mkDirs(self, path):
         if not os.path.exists(path):
@@ -48,8 +49,11 @@ class GitMultiClone(git.GitCommands):
     def mangleUri(self, uri):
         if not self.readonly and self.isReadOnly(uri):
             url = urlparse.urlparse(uri)
+            netloc = url.netloc
+            if url.netloc in self._cfg.gitUserMap:
+                netloc = ''.join([self._cfg.gitUserMap.get(url.netloc), '@',  url.netloc])  
             if url.scheme == 'git':
-                uri = '/'.join(['ssh:/', url.netloc, 'git', url.path[1:]])
+                uri = '/'.join(['ssh:/', netloc, 'git', url.path[1:]])
         return uri
 
     def prep(self, path):
@@ -63,12 +67,12 @@ class GitMultiClone(git.GitCommands):
         for repo in self.repos: 
             okay = True
             branch = repo.branch or 'master'
-            print 'List head for %s %s' % (repo.uri, branch)
-            if self.test:
-                print self.ls_remote(repo.uri, branch)
-                continue
             local = self.prep(repo.path)
             uri = self.mangleUri(repo.uri)
+            print 'List head for %s %s' % (uri, branch)
+            if self.test:
+                print self.ls_remote(uri, branch)
+                continue
             if os.path.exists(os.path.join(local, '.git')):
                 if self.ask:
                     okay = cmdline.askYn('Dir exists continue with pull? [y/N]', default=False)
