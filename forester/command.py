@@ -136,10 +136,10 @@ class InitCommand(ForesterCommand):
 class CloneCommand(ForesterCommand):
     commands = ['clone']
     help = 'Clone git forest from a control source'
+    paramHelp = '[forest]...'
 
     def addParameters(self, argDef):
         ForesterCommand.addParameters(self, argDef)
-        argDef['forest'] = options.ONE_PARAM
         argDef['branch'] = options.ONE_PARAM
         argDef['excludes'] = options.MULT_PARAM
         argDef['cfg'] = options.ONE_PARAM
@@ -153,16 +153,15 @@ class CloneCommand(ForesterCommand):
         argDef['control-uri'] = options.ONE_PARAM
 
     def shouldRun(self):
-        if self.forest and self.cfgfile:
+        if self.forests:
             return True
-        logger.error('forest command requires at least --forest or one --cfgfile')
+        logger.error('forest command requires at least one forest')
         return False
 
 
     def runCommand(self, cfg, argSet, params, **kw):
         self.cfg = cfg
         self.cfgfile = argSet.pop('cfgfile', None)
-        self.forest = argSet.pop('forest', None)
         self.branch = argSet.pop('branch', None)
         self.excludes = argSet.pop('excludes', None)
         self.subdir = argSet.pop('subdir', None)
@@ -175,15 +174,18 @@ class CloneCommand(ForesterCommand):
         self.test = argSet.pop('dry-run', False)
 
 
-        _skid = skidder.Skidder(forest = self.forest, 
-                                cfgfile= self.cfgfile, 
-                                base = self.base, 
-                                path = self.path, 
-                                branch = self.branch, 
-                                ask=self.ask,
-                                test = self.test,
-                            )
-        _skid.main()
+        self.forests = params[2:]
+
+        for forest in self.forests:
+            _skid = skidder.Skidder(forest = forest, 
+                                    cfgfile= self.cfgfile, 
+                                    base = self.base, 
+                                    path = self.path, 
+                                    branch = self.branch, 
+                                    ask=self.ask,
+                                    test = self.test,
+                                )
+            _skid.main()
 
 
 
