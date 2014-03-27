@@ -9,7 +9,8 @@ logger = logging.getLogger(__name__)
 class Skidder(object):
 
     def __init__(self, forest, cfgfile=None, base=None, path=None,
-                                branch=None, excludes=[], ask=False, test=False):
+                                branch=None, excludes=[], ask=False, 
+                                readonly=False, test=False):
 
         self.section= 'forest:%s' % forest
         self.cfgfile = cfgfile
@@ -20,6 +21,7 @@ class Skidder(object):
         self._cfg = None
         self.excludes = excludes
         self.ask = ask
+        self.readonly = readonly
         self.test = test
         self.getDefaultConfig()
         self.cfgs = {}
@@ -88,6 +90,8 @@ class Skidder(object):
                                     subdir = self.subdir,
                                     cachedir = self.cachedir, 
                                     ask=self.ask,
-                                    test = self.test)
+                                    readonly = self.readonly,
+                                    test = self.test,
+                                    )
 
         _f.main()

@@ -1,5 +1,6 @@
 import logging
 import os
+import urlparse
 
 from forester.scm import git
 from forester import errors
@@ -13,15 +14,15 @@ from collections import namedtuple
 class SimpleGitRepo(namedtuple('gitrepo', 'name branch uri path head')):
     __slots__ = ()
 
-
 class GitMultiClone(git.GitCommands):
-    def __init__(self, repos, subdir, cachedir, ask=False, test=False):
+    def __init__(self, repos, subdir, cachedir, ask=False, readonly=False, test=False):
         super(GitMultiClone, self).__init__(cachedir)
         self.repos = repos
         self.subdir = subdir
         self.cachedir = cachedir
-        self.test = test
         self.ask = ask
+        self.readonly = readonly
+        self.test = test
         self.prepped = False
 
     def mkDirs(self, path):
@@ -36,6 +37,20 @@ class GitMultiClone(git.GitCommands):
             if commit == test:
                 return True
         return False
+
+    def isReadOnly(self, uri):
+        readonly_repo_prefix = ['http://', 'https://', 'git://']
+        for pre in readonly_repo_prefix:
+            if uri.startswith(pre):
+                return True
+        return False
+
+    def mangleUri(self, uri):
+        if not self.readonly and self.isReadOnly(uri):
+            url = urlparse.urlparse(uri)
+            if url.scheme == 'git':
+                uri = '/'.join(['ssh:/', url.netloc, 'git', url.path[1:]])
+        return uri
 
     def prep(self, path):
         if self.subdir:
@@ -53,6 +68,7 @@ class GitMultiClone(git.GitCommands):
                 print self.ls_remote(repo.uri, branch)
                 continue
             local = self.prep(repo.path)
+            uri = self.mangleUri(repo.uri)
             if os.path.exists(os.path.join(local, '.git')):
                 if self.ask:
                     okay = cmdline.askYn('Dir exists continue with pull? [y/N]', default=False)
@@ -63,7 +79,7 @@ class GitMultiClone(git.GitCommands):
                 if self.ask:
                     okay = cmdline.askYn('continue with clone? [y/N]', default=False)
                 if okay:
-                    self.clone(repo.uri, branch, local, path=None)
+                    self.clone(uri, branch, local, path=None)
         return
 
     def main(self):
