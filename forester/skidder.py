@@ -91,6 +91,7 @@ class Skidder(object):
                                     cachedir = self.cachedir, 
                                     ask=self.ask,
                                     readonly = self.readonly,
+                                    cfg = self._cfg,
                                     test = self.test,
                                     )
 
