@@ -54,7 +54,11 @@ class ForesterMain(mainhandler.MainHandler):
 
 
     def configureLogging(self, logFile, debug, quiet):
-        self.mkDirs(os.path.dirname(logFile))
+        logDir = os.path.dirname(logFile)
+        if not logDir:
+            # Initial configuration; don't even bother
+            return
+        self.mkDirs(logDir)
         if debug:
             consoleLevel = logging.DEBUG
             fileLevel = logging.DEBUG
