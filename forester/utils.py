@@ -10,6 +10,8 @@ import logging
 import os
 
 
+from conary import util as conary_util
+
 from forester import config
 from forester.scm import git
 from forester import errors
@@ -52,11 +54,6 @@ class InitialSetup(BaseUtil):
         if not self.subdir:
             self.subdir = self._cfg.defaultSubDir
 
-    def mkDirs(self, path):
-        if not os.path.exists(path):
-            os.makedirs(path)
-        assert os.path.exists(path)
-
     def getDefaultConfig(self):
         logger.info('Loading default cfg')
         self._cfg = config.ForesterConfiguration(config=self._cfgfile)
@@ -84,14 +81,14 @@ class InitialSetup(BaseUtil):
             self._cfg.useAliases = aliases
         if subdir:
             self._cfg.defaultSubDir = subdir
-            self.mkDirs(self._cfg.defaultSubDir)
+            conary_util.mkdirChain(self._cfg.defaultSubDir)
 
         self._cfg.logFile = os.path.join(self._cfg.defaultSubDir, 'forester.log')
         self._cfg.tmpDir = os.path.join(self._cfg.defaultSubDir,'tmp')
         self._cfg.defaultCacheDir = os.path.join(self._cfg.defaultSubDir, 'cachedir')   
         self.cachedir = self._cfg.defaultCacheDir
-        self.mkDirs(self._cfg.defaultCacheDir)
-        self.mkDirs(self._cfg.tmpDir)
+        conary_util.mkdirChain(self._cfg.defaultCacheDir)
+        conary_util.mkdirChain(self._cfg.tmpDir)
  
         if wms:
             self._cfg.defaultControlType = 'WMS'

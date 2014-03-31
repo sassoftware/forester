@@ -7,6 +7,9 @@ from forester import errors
 
 from conary.conaryclient import cmdline
 
+from conary import util as conary_util
+
+
 logger = logging.getLogger(__name__)
 
 from collections import namedtuple
@@ -25,11 +28,6 @@ class GitMultiClone(git.GitCommands):
         self.test = test
         self.prepped = False
         self._cfg = cfg
-
-    def mkDirs(self, path):
-        if not os.path.exists(path):
-            os.makedirs(path)
-        assert os.path.exists(path)
 
     def _check_remote_heads(self, test, uri, branch=None):
         heads = self.ls_remote(uri, branch)
@@ -59,11 +57,11 @@ class GitMultiClone(git.GitCommands):
     def prep(self, path):
         if self.subdir:
             path = os.path.join(self.subdir, path)
-        self.mkDirs(path)
+        conary_util.mkdirChain(path)
         return path
         
     def cloneMultiple(self):
-        self.mkDirs(self.cachedir)
+        conary_util.mkdirChain(self.cachedir)
         for repo in self.repos: 
             okay = True
             branch = repo.branch or 'master'
