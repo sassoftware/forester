@@ -10,7 +10,7 @@ import logging
 import os
 
 
-from conary import util as conary_util
+from conary.lib import util as conary_util
 
 from forester import config
 from forester.scm import git

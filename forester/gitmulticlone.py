@@ -7,7 +7,7 @@ from forester import errors
 
 from conary.conaryclient import cmdline
 
-from conary import util as conary_util
+from conary.lib import util as conary_util
 
 
 logger = logging.getLogger(__name__)

@@ -22,7 +22,7 @@ import sys
 
 from conary.lib import log as cny_log
 from conary.lib import mainhandler
-from conary import util as conary_util
+from conary.lib import util as conary_util
 
 from forester import command
 from forester import config
