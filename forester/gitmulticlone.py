@@ -73,9 +73,9 @@ class GitMultiClone(git.GitCommands):
                 continue
             if os.path.exists(os.path.join(local, '.git')):
                 if self.ask:
-                    okay = cmdline.askYn('Dir exists continue with pull? [y/N]', default=False)
+                    okay = cmdline.askYn('Dir exists; continue with pull? [y/N]', default=False)
                 if okay:
-                    print "%s/.git exists can not pull" % local
+                    print "%s/.git exists; can not pull" % local
                     print "Not Supported Yet"
             else:
                 if self.ask:
