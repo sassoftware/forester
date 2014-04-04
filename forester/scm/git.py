@@ -90,7 +90,8 @@ class GitCommands(object):
         git checkout -b <branch>
         '''
         cmd = ['git', 'checkout']
-        if branch:cmd = cmd + ['-b' , branch]
+        if branch:
+            cmd.extend(['-b' , branch])
         return self.run_git(cmd, path)
 
     def branch(self, path, branch=None):
@@ -101,7 +102,8 @@ class GitCommands(object):
         git branch -b <branch>
         '''
         cmd = ['git', 'branch']
-        if branch:cmd = cmd + ['-b' , branch]
+        if branch:
+            cmd.extend(['-b' , branch])
         return self.run_git(cmd, path)
 
     def pull(self, path, branch=None):
@@ -110,7 +112,8 @@ class GitCommands(object):
         git pull
         '''
         cmd = ['git', 'pull']
-        if branch:cmd = cmd + ['-b' , branch]
+        if branch:
+            cmd.extend(['-b' , branch])
         return self.run_git(cmd, path)
 
     def clone(self, uri, branch=None, clonedir=None, path=None):
@@ -118,7 +121,8 @@ class GitCommands(object):
         git clone -b <branch> <uri> <dir>
         '''
         cmd = ['git', 'clone']
-        if branch:cmd = cmd + ['-b' , branch]
+        if branch:
+            cmd.extend(['-b' , branch])
         cmd.append(uri)
         if clonedir:cmd.append(clonedir)
         return self.run_git(cmd, path)
