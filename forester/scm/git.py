@@ -14,7 +14,8 @@ import logging
 import os
 import subprocess
 
-from forester import scm
+from .. import scm
+from ..errors import ForesterGitError
 
 log = logging.getLogger(__name__)
 
@@ -24,11 +25,16 @@ class GitCommands(object):
         self.cachedir = cachedir
 
     def run_git(self, cmd, directory=None):
+        if directory:
+            log.debug("(cd '%s'; %s)", directory, " ".join(cmd))
+        else:
+            log.debug("%s", " ".join(cmd))
         p = subprocess.Popen(
-            cmd, stdout=subprocess.PIPE, cwd=directory)
-        stdout, _ = p.communicate()
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=directory)
+        log.debug
+        stdout, stderr = p.communicate()
         if p.returncode:
-            raise RuntimeError("git exited with status %s" % p.returncode)
+            raise ForesterGitError(p.returncode, stdout, stderr)
         return stdout
 
     def ls_remote(self, uri, branch=None):
@@ -106,14 +112,18 @@ class GitCommands(object):
             cmd.extend(['-b' , branch])
         return self.run_git(cmd, path)
 
-    def pull(self, path, branch=None):
+    def pull(self, path, branch=None, withPush=False):
         '''
         cd path
         git pull
         '''
         cmd = ['git', 'pull']
         if branch:
-            cmd.extend(['-b' , branch])
+            cmd.extend(['--ff-only', 'origin', 'refs/heads/%s' % branch])
+        ret = self.run_git(cmd, path)
+        if not withPush:
+            return ret
+        cmd = [ 'git', 'push', 'origin' ]
         return self.run_git(cmd, path)
 
     def clone(self, uri, branch=None, clonedir=None, path=None):
@@ -125,6 +135,7 @@ class GitCommands(object):
             cmd.extend(['-b' , branch])
         cmd.append(uri)
         if clonedir:cmd.append(clonedir)
+        log.info("%s", " ".join(cmd))
         return self.run_git(cmd, path)
 
 

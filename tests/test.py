@@ -15,7 +15,8 @@ def testSimpleGitRepo(name, branch, uri, path, head):
 
 def testGitMultiClone(repos, subdir, cachedir, ask=True, test=True):
     import gitmulticlone
-    _p = gitmulticlone.GitMultiClone(repos, subdir, cachedir, 
+    forestName = 'aaa'
+    _p = gitmulticlone.GitMultiClone(forestName, repos, subdir, cachedir,
                                                 ask=ask, test=test)
     _p.main()
 

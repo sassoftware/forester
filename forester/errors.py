@@ -35,9 +35,6 @@ class ForesterError(Exception):
         return self.msg_prefix + self.msg % str(self.exception)
 
 
-class ForesterBranchError(ForesterError):
-    msg = "ERROR: the branch specified at command line does not match the branchmacro in the config file (sourceControlBranch): %s."
-
 class ForesterBranchMissingError(ForesterError):
     msg = "ERROR: %s branch is not specified in the config file."
 
@@ -46,6 +43,21 @@ class ForesterBranchError(ForesterError):
 
 class ForesterGrouperError(ForesterError):
     msg = "ERROR: Group %s failed to build because name was not specified in cfgfile or at cmdline"
+
+class ForesterScmError(ForesterError):
+    msg = "Source Control Management Error: %s"
+    def __init__(self, retcode, stdout, stderr, exception=None):
+        super(ForesterScmError, self).__init__(exception)
+        self.retcode = retcode
+        self.stdout = stdout
+        self.stderr = stderr
+
+    def __str__(self):
+        return self.msg % "Return code: {retcode}; stderr: {stderr}".format(
+                retcode=self.retcode, stderr=self.stderr)
+
+class ForesterGitError(ForesterScmError):
+    pass
 
 class ForesterConfigError(ForesterError):
     msg = "ERROR: Could not find section [%s] in cfg file"

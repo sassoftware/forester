@@ -43,44 +43,45 @@ class ForesterMain(mainhandler.MainHandler):
         command.HelpCommand,
         command.ConfigCommand,
         command.CloneCommand,
+        command.PullCommand,
+        command.MergeCommand,
         command.InitCommand,
         ]
 
     setSysExcepthook = False
 
+    def _getParserFlags(self, thisCommand):
+        # We need to disable Conary's handling of --verbose
+        ret = super(ForesterMain, self)._getParserFlags(thisCommand)
+        ret['addVerboseOptions'] = False
+        return ret
 
-    def configureLogging(self, logFile, debug, quiet):
+    def configureLogging(self, logFile, verbosity):
         logDir = os.path.dirname(logFile)
         if not logDir:
             # Initial configuration; don't even bother
             return
         conary_util.mkdirChain(logDir)
-        if debug:
-            consoleLevel = logging.DEBUG
-            fileLevel = logging.DEBUG
-        elif quiet:
-            consoleLevel = logging.ERROR
-            fileLevel = logging.INFO
+        if verbosity == 0:
+            consoleLevel = fileLevel = logging.WARN
+        elif verbosity == 1:
+            consoleLevel = fileLevel = logging.INFO
         else:
-            consoleLevel = logging.INFO
-            fileLevel = logging.INFO
+            consoleLevel = fileLevel = logging.DEBUG
         cny_log.setupLogging(
             logPath=logFile,
             consoleLevel=consoleLevel,
-            consoleFormat='apache',
             fileLevel=fileLevel,
-            fileFormat='apache',
             logger='forester',
             )
 
     def runCommand(self, command, cfg, argSet, *args, **kw):
-        debug = argSet.get('debug-logging', False)
+        verbosity = 0
         if cfg.debugMode:
-            debug = cfg.debugMode
-        if debug:
-            logger.debug('Running in debug mode...')
-        quiet = argSet.get('quiet', False)
-        self.configureLogging(cfg.logFile, debug, quiet)
+            verbosity = 2
+        # Command line trumps config file
+        verbosity = argSet.get('verbose', verbosity)
+        self.configureLogging(cfg.logFile, verbosity)
         logger.info("Running command: %s", command.commands[0])
         response = mainhandler.MainHandler.runCommand(self, command, cfg,
                                                       argSet, *args, **kw)

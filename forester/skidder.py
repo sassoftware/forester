@@ -6,17 +6,20 @@ from forester import gitmulticlone
 
 logger = logging.getLogger(__name__)
 
+class InvalidForest(Exception):
+    pass
+
 class Skidder(object):
 
     def __init__(self, forest, cfgfile=None, base=None, path=None,
-                                branch=None, excludes=[], ask=False, 
+                                excludes=[], ask=False, 
                                 readonly=False, test=False):
 
+        self.forest = forest
         self.section= 'forest:%s' % forest
         self.cfgfile = cfgfile
         self.base = base
         self.path = path
-        self.branch = branch
         self.controltype = None
         self._cfg = None
         self.excludes = excludes
@@ -29,8 +32,9 @@ class Skidder(object):
             if self.section in sectionName:
                 self.cfgs.setdefault(sectionName, self._cfg.getSection(sectionName))
         self.forestCfg = self.cfgs.get(self.section)
-        if not self.branch:
-            self.branch = self.forestCfg.ForestBranch
+        if self.forestCfg is None:
+            raise InvalidForest(forest)
+        self.branch = self.forestCfg.ForestBranch or self._cfg.DefaultBranch
         if not self.base:
             self.base = self.forestCfg.ForestControlUri
         if not self.path:
@@ -48,8 +52,6 @@ class Skidder(object):
             self.subdir = self._cfg.defaultSubDir
         if not self.cachedir:
             self.cachedir = self._cfg.defaultCacheDir
-        if not self.branch:
-            self.branch = self._cfg.defaultBranch
         if not self.base:
             self.base = self._cfg.defaultControlUri
         if not self.controltype:
@@ -60,9 +62,9 @@ class Skidder(object):
         assert self.path
 
         self.controller = controller.Controller.create(self.controltype,
-                                                self.base, 
-                                                self.path, 
-                                                self.branch, 
+                                                self.base,
+                                                self.path,
+                                                self.branch,
                                                 )
 
     def getDefaultConfig(self, cfgFile=None):
@@ -77,16 +79,18 @@ class Skidder(object):
             raise 
         return repos
 
-    def main(self):
+    def main(self, otherBranch, withPull=False, withPush=False):
         reposet = self.findrepos()
         toRemove = set()
         for repo in reposet:
             if repo.name in self.excludes:
                 toRemove.add(repo)
-                print 'Excluding %s' % repo.name
+                logger.debug("Excluding %s", repo.name)
         reposet.difference_update(toRemove)
 
-        _f = gitmulticlone.GitMultiClone(repos = reposet, 
+        _f = gitmulticlone.GitMultiClone(
+                                    forestName = self.forest,
+                                    repos = reposet,
                                     subdir = self.subdir,
                                     cachedir = self.cachedir, 
                                     ask=self.ask,
@@ -95,4 +99,4 @@ class Skidder(object):
                                     test = self.test,
                                     )
 
-        _f.main()
+        _f.main(otherBranch, withPull=withPull, withPush=withPush)

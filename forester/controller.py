@@ -101,8 +101,6 @@ class WmsController(BaseController):
         for name, info in data.iteritems():
             repo = gitrepo.GitRepo(name=name)
             repo.update(info)
-            # XXX misa: probably the wrong place for this
-            repo.path = os.path.join(self.path, repo.path.partition('/')[2])
             self.reposet.add(repo)
         return self.reposet
 

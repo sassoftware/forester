@@ -25,13 +25,19 @@ from forester import utils
 
 logger = logging.getLogger(__name__)
 
-
 class ForesterCommand(command.AbstractCommand):
+    _options = [
+            ('verbose', '-v', options.COUNT_PARAM, dict(help="Increase verbosity")),
+            ]
 
     def addParameters(self, argDef):
         command.AbstractCommand.addParameters(self, argDef)
-        argDef['quiet'] = options.NO_PARAM
-        argDef['debug-logging'] = options.NO_PARAM
+        self.addLocalParameters(argDef)
+
+    def addLocalParameters(self, argDef):
+        for opt in self._options:
+            optName, rest = opt[0], opt[1:]
+            argDef[optName] = rest
 
     def runCommand(self, *args, **kw):
         pass
@@ -79,30 +85,20 @@ class ConfigCommand(ForesterCommand):
 class InitCommand(ForesterCommand):
     commands = ['init']
     help = 'Init working directories'
-    docs = {'name'  : 'User Name used for git',
-            'email' : 'Email used for git',
-            'common-aliases' : 'Setup common aliases for git',
-            'subdir' : 'Top Level Sub Directory for all git checkouts',
-            'forest' : 'Name of forest to add to the config',
-            'branch' : 'Prefered branch of forest to add to the config',
-            'wms' : 'Set forest as WMS forest',
-            'wmsbase' : 'Base url for WMS service',
-            'wmspath' : 'Path for the wms forest',
-            }
 
+    _options = ForesterCommand._options + [
+            ('name', options.ONE_PARAM, dict(help='User Name used for git')),
+            ('email', options.ONE_PARAM, dict(help='Email used for git')),
+            ('common-aliases', options.NO_PARAM, dict(help='Setup common aliases for git')),
+            ('cfgfile', options.ONE_PARAM, dict(help='Path to forestrc config file')),
+            ('subdir', options.ONE_PARAM, dict(help='Top Level Sub Directory for all git checkouts')),
+            ('forest', options.ONE_PARAM, dict(help='Name of forest to add to the config')),
+            ('branch', options.ONE_PARAM, dict(help='Prefered branch of forest to add to the config')),
+            ('wms', options.NO_PARAM, dict(help='Set forest as WMS forest')),
+            ('wmsbase', options.ONE_PARAM, dict(help='Base url for WMS service')),
+            ('wmspath', options.ONE_PARAM, dict(help='Path for the wms forest')),
+            ]
 
-    def addParameters(self, argDef):
-        ForesterCommand.addParameters(self, argDef)
-        argDef['name'] = options.ONE_PARAM
-        argDef['email'] = options.ONE_PARAM
-        argDef['common-aliases'] = options.NO_PARAM
-        argDef['subdir'] = options.ONE_PARAM
-        argDef['cfgfile'] = options.ONE_PARAM
-        argDef['forest'] = options.ONE_PARAM
-        argDef['branch'] = options.ONE_PARAM
-        argDef['wms'] = options.NO_PARAM
-        argDef['wmsbase'] = options.ONE_PARAM 
-        argDef['wmspath'] = options.ONE_PARAM
 
     def shouldRun(self):
         if not self.name and not self.subdir:
@@ -145,40 +141,20 @@ class InitCommand(ForesterCommand):
 
 
 class CloneCommand(ForesterCommand):
+    WithPull = False
+    WithPush = False
     commands = ['clone']
     help = 'Clone git forest from a control source'
     paramsHelp = '[forest]...'
-    docs = {'forest'  : 'Name of forest in config file',
-            'branch' : 'Branch to checkout',
-            'excludes' : 'Names of git repos to skip in a forest',
-            'subdir' : 'Top Level Sub Directory for all git checkouts',
-            'cachedir' : 'Cache directory to use for git checkouts',
-            'cfg' : 'Path to forestrc config file',
-            'ask' : 'Ask before cloning a git repo',
-            'readonly' : 'Do not mangle read only git repo uri',
-            'dry-run' : 'List the head instead of cloning git repo',
-            'base' : 'Base url for WMS service',
-            'path' : 'Path for the wms forest',
-            'control-file' : 'Not implemented yet',
-            'control-uri' : 'Not implemented yet',
-            }
+    _options = ForesterCommand._options + [
+            ('cfgfile', options.ONE_PARAM, dict(help='Path to forestrc config file')),
+            ('ask', options.NO_PARAM, dict(help='Ask before cloning a git repo')),
+            ('readonly', options.NO_PARAM, dict(help='Do not mangle read only git repo uri')),
+            ('dry-run' , options.NO_PARAM, dict(help='List the head instead of cloning git repo')),
+            ('exclude' , options.MULT_PARAM, dict(help='Skip these repos')),
+            ]
 
     requireConfig = True
-
-    def addParameters(self, argDef):
-        ForesterCommand.addParameters(self, argDef)
-        argDef['branch'] = options.ONE_PARAM
-        argDef['excludes'] = options.MULT_PARAM
-        argDef['cfg'] = options.ONE_PARAM
-        argDef['subdir'] = options.ONE_PARAM
-        argDef['cachedir'] = options.ONE_PARAM
-        argDef['dry-run'] = options.NO_PARAM
-        argDef['ask'] = options.NO_PARAM
-        argDef['read-only'] = options.NO_PARAM
-        argDef['base'] = options.ONE_PARAM
-        argDef['path'] = options.ONE_PARAM
-        argDef['control-file'] = options.ONE_PARAM
-        argDef['control-uri'] = options.ONE_PARAM
 
     def shouldRun(self):
         if not self.forests:
@@ -186,18 +162,11 @@ class CloneCommand(ForesterCommand):
             return False
         return True
 
-
     def runCommand(self, cfg, argSet, params, **kw):
         self.cfg = cfg
         self.cfgfile = argSet.pop('cfgfile', None)
         self.branch = argSet.pop('branch', None)
-        self.excludes = argSet.pop('excludes', None)
-        self.subdir = argSet.pop('subdir', None)
-        self.base = argSet.pop('base', None)
-        self.path = argSet.pop('path', None)
-        self.controlfile = argSet.pop('control-file', None)
-        self.controluri = argSet.pop('control-uri', None)
-        self.cachedir = argSet.pop('cachedir', None)
+        self.excludes = argSet.pop('exclude', None)
         self.ask = argSet.pop('ask', False)
         self.readonly = argSet.pop('readonly', False)
         self.test = argSet.pop('dry-run', False)
@@ -211,16 +180,40 @@ class CloneCommand(ForesterCommand):
 
 
         for forest in self.forests:
-            _skid = skidder.Skidder(forest = forest, 
-                                    cfgfile= self.cfgfile, 
-                                    base = self.base, 
-                                    path = self.path, 
-                                    branch = self.branch, 
-                                    ask=self.ask,
-                                    readonly=self.readonly,
-                                    test = self.test,
-                                )
-            _skid.main()
+            try:
+                _skid = skidder.Skidder(forest = forest,
+                    cfgfile= self.cfgfile,
+                    base = None,
+                    path = None,
+                    ask=self.ask,
+                    readonly=self.readonly,
+                    test = self.test,
+                    )
+            except skidder.InvalidForest:
+                logger.error("Forest %s is not defined", forest)
+                continue
+            _skid.main(otherBranch=self.branch, withPull=self.WithPull,
+                    withPush=self.WithPush)
 
+class PullCommand(CloneCommand):
+    WithPull = True
+    commands = ['pull']
+    help = 'Pull git forest from a control source'
+    paramsHelp = '[forest]...'
 
+class MergeCommand(PullCommand):
+    WithPush = True
+    commands = ['merge']
+    help = 'Merge git forest with branch'
+    paramsHelp = '[forest]...'
+    _options = PullCommand._options + [
+            ('branch', options.ONE_PARAM, dict(help='Branch to merge with')),
+            ]
 
+    def shouldRun(self):
+        if not super(MergeCommand, self).shouldRun():
+            return False
+        if not self.branch:
+            logger.error("--branch is required")
+            return False
+        return True
