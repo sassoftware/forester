@@ -25,6 +25,7 @@ class Forester(BuildPackageRecipe):
         'python-setuptools',
         'mercurial',
         'git',
+        'python-requests',
         ]
 
     def setup(r):
