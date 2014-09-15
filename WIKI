@@ -75,6 +75,104 @@ Example for cloning multiple forests as long as they are setup in config
 forester clone foobar foobaz foobuz
 </source>
 
+===Forester subcommand options===
+
+{|
+|-
+|<code>clone</code> || Clone git forest from a control source
+|-
+|<code>config</code> || Display the current configuration
+|-
+|<code>help</code> || Display help information
+|-
+|<code>init</code> || Init working directories
+|-
+|<code>merge</code> || Merge git forest with branch
+|-
+|<code>pull</code> || Pull git forest from a control source
+|}
+
+All commands take -v or --verbose to increase verbosity
+
+====clone====
+Clone git forest from a control source
+
+{|
+|-
+|<code>--ask</code> ||   Ask before cloning a git repo
+|-
+|<code>--cfgfile=CFGFILE</code> ||  Path to forestrc config file
+|-
+|<code>--dry-run</code> ||  List the head instead of cloning git repo
+|-
+|<code>--exclude=EXCLUDE</code> ||  Skip these repos
+|-
+|<code>--readonly</code> ||  Do not mangle read only git repo uri
+|}
+
+====config====
+Display the current configuration
+
+====init====
+Init working directories
+
+{|
+|-
+|<code>--branch=BRANCH</code> ||  Prefered branch of forest to add to the config
+|-
+|<code>--cfgfile=CFGFILE</code> ||  Path to forestrc config file
+|-
+|<code>--common-aliases</code> ||  Setup common aliases for git
+|-
+|<code>--email=EMAIL</code> ||  Email used for git
+|-
+|<code>--forest=FOREST</code> ||  Name of forest to add to the config
+|-
+|<code>--name=NAME</code> ||  User Name used for git
+|-
+|<code>--subdir=SUBDIR</code> ||  Top Level Sub Directory for all git checkouts
+|-
+|<code>--wms</code> ||   Set forest as WMS forest
+|-
+|<code>--wmsbase=WMSBASE</code> ||  Base url for WMS service
+|-
+|<code>--wmspath=WMSPATH</code> ||  Path for the wms forest
+|}
+
+====merge====
+Merge git forest with branch
+
+{|
+|-
+|<code>--ask</code> ||   Ask before cloning a git repo
+|-
+|<code>--branch=BRANCH</code> ||  Branch to merge with
+|-
+|<code>--cfgfile=CFGFILE</code> ||  Path to forestrc config file
+|-
+|<code>--dry-run</code> ||  List the head instead of cloning git repo
+|-
+|<code>--exclude=EXCLUDE</code> ||  Skip these repos
+|-
+|<code>--readonly</code> ||  Do not mangle read only git repo uri
+|}
+
+====pull====
+Pull git forest from a control source
+
+{|
+|-
+|<code>--ask</code> ||   Ask before cloning a git repo
+|-
+|<code>--cfgfile=CFGFILE</code> ||  Path to forestrc config file
+|-
+|<code>--dry-run</code> ||  List the head instead of cloning git repo
+|-
+|<code>--exclude=EXCLUDE</code> ||  Skip these repos
+|-
+|<code>--readonly</code> ||  Do not mangle read only git repo uri
+|}
+
 ===Example===
 
 Add vApp forest to config
@@ -185,4 +283,3 @@ Contact [[Brett Smith]] at [mailto:bc.smith@sas.com bc.smith@sas.com] or [[Walte
 
 
 [[Category:Sandbox development tools for vApps]]
-
