@@ -33,5 +33,6 @@ class Forester(BuildPackageRecipe):
         env = 'VERSION=%(version)s MAJOR=%(major)s'
         r.addMercurialSnapshot()
         r.Make(env)
+        r.Make('man DESTDIR=%(destdir)s')
         r.MakeInstall(env)
 

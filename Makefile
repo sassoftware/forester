@@ -25,6 +25,7 @@ export TIMESTAMP = $(shell python -c "import time; print time.time(); exit;")
 export CFGDEVEL=rpathrc
 
 SUBDIRS=forester commands
+MANPAGES=$(notdir $(filter %.1,$(wildcard docs/manpages/*.1)))
 
 extra_files = \
 	Make.rules 		\
@@ -44,6 +45,13 @@ subdirs: default-subdirs
 install: install-subdirs
 
 clean: clean-subdirs default-clean
+
+man:
+	mkdir -p $(DESTDIR)$(mandir)/man1 
+	for M in $(MANPAGES); do \
+		install -m 0644 docs/manpages/$$M $(DESTDIR)$(mandir)/man1/; \
+		gzip $(DESTDIR)$(mandir)/man1/$$M; \
+	done
 
 archive:
 		git archive --format=tar --prefix=forester-$(VERSION)/ HEAD | gzip -9c > forester-$(VERSION).tar.gz
