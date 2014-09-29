@@ -90,6 +90,8 @@ class InitCommand(ForesterCommand):
             ('name', options.ONE_PARAM, dict(help='User Name used for git')),
             ('email', options.ONE_PARAM, dict(help='Email used for git')),
             ('common-aliases', options.NO_PARAM, dict(help='Setup common aliases for git')),
+            ('common-ignore', options.NO_PARAM, dict(help='Setup common ignore patterns for git')),
+            ('git-global', options.NO_PARAM, dict(help='Write common aliases and common ignore patterns for git in global .gitconfig/.gitignore')),
             ('cfgfile', options.ONE_PARAM, dict(help='Path to forestrc config file')),
             ('subdir', options.ONE_PARAM, dict(help='Top Level Sub Directory for all git checkouts')),
             ('forest', options.ONE_PARAM, dict(help='Name of forest to add to the config')),
@@ -111,6 +113,8 @@ class InitCommand(ForesterCommand):
         self.name = argSet.pop('name', None)
         self.email = argSet.pop('email', None)
         self.aliases = argSet.pop('common-aliases', None)
+        self.ignore = argSet.pop('common-ignore', None)
+        self.gitglobal = argSet.pop('git-global', False)
         self.subdir = argSet.pop('subdir', None)
         self.cfgfile = argSet.pop('cfgfile', None)
         self.forest = argSet.pop('forest', None)
@@ -118,7 +122,6 @@ class InitCommand(ForesterCommand):
         self.wms = argSet.pop('wms', False)
         self.wmsbase = argSet.pop('wmsbase', None)
         self.wmspath = argSet.pop('wmspath', None)
-        
 
         if not self.shouldRun():
             logger.info('init will not run, exiting.')
@@ -130,6 +133,8 @@ class InitCommand(ForesterCommand):
                 self.name,
                 self.email,
                 self.aliases,
+                self.ignore,
+                self.gitglobal,
                 self.subdir,
                 self.cfgfile,
                 self.forest,

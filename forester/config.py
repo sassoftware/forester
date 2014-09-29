@@ -130,7 +130,9 @@ class ForesterConfiguration(MainConfig):
     defaultControlUri           = cfg.CfgString
     defaultControlType          = (cfg.CfgString, 'WMS')
     defaultForest               = CfgString
+    defaultIgnoreFile           = (cfg.CfgString, '.gitignore')
     customAliases               = CfgDict(CfgString)
+    customIgnore                = CfgList(CfgString)
     defaultWmsBase              = (cfg.CfgString, 'http://wheresmystuff.unx.sas.com')
 
 
@@ -141,6 +143,7 @@ class ForesterConfiguration(MainConfig):
         self.ignoreErrors = ignoreErrors
         self._readCfg()
         self._aliases = None
+        self._ignore = None
 
     def getDefaultAliases(self):
         if self._aliases is None:                                  
@@ -156,6 +159,17 @@ class ForesterConfiguration(MainConfig):
         else:
             self._aliases.update(self.customAliases)
         return self._aliases
+
+    def getDefaultIgnore(self):
+        if self._ignore is None:                                  
+            self._ignore = [    '*.py[cod]',
+                            '__pycache__/',
+                            '*.swp',
+                            '.gitignore',
+                        ]
+        else:
+            self._ignore.extend(self.customIgnore)
+        return self._ignore
 
 
     def _readCfg(self, paths=[]):

@@ -4,7 +4,7 @@
 # All rights reserved.
 #
 
-
+from __future__ import with_statement
 
 '''
 Helper functions for dealing with git repositories.
@@ -78,17 +78,39 @@ class GitCommands(object):
         if tag:cmd.append(tag)
         return self.run_git(cmd, path)
 
-    def set_globals(self, aliases):
+    def set_aliases(self, aliases, gitglobal=False):
         '''
         Where aliases is a dict of attribute and value
         {'alias.co': 'checkout', 'user.name': 'Joe', 
             'user.email': 'j@b.com'}
         '''
-        config = ['git', 'config', '--global']
+        config = ['git', 'config', ]
+
+        if gitglobal:
+            config.append('--global')
+        else:
+            config.extend(['--file', os.path.join(self._cfg.defaultSubDir, '.gitconfig')])
         results = {}
         for attr,value in aliases.iteritems():
             results.setdefault(attr, self.run_git(config + [attr,value]))
         return results
+
+    def set_ignore(self, ignore, gitglobal=False):
+        '''
+        Where ignore is a list of ignore patterns
+        '''
+        ignorefile = self._cfg.defaultIgnoreFile
+        if ignorefile.startswith('~/') and 'HOME' in os.environ:
+            ignorefile = os.path.join(os.environ['HOME'], ignorefile[2:])
+        elif gitglobal and 'HOME' in os.environ:
+            ignorefile = os.path.join(os.environ['HOME'], ignorefile)
+        else:
+            ignorefile = os.path.join(self._cfg.defaultSubDir, ignorefile)
+
+        with open(ignorefile, 'a') as f:
+            for value in ignore:
+                f.write('{0}\n'.format(value))
+        return
 
     def checkout(self, path, branch):
         '''

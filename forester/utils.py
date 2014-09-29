@@ -5,17 +5,17 @@
 #
 # All rights reserved.
 
+from __future__ import print_function
+
 import urlparse
 import logging 
 import os
-
 
 from conary.lib import util as conary_util
 
 from forester import config
 from forester.scm import git
 from forester import errors
-
 
 logger = logging.getLogger(__name__)
 
@@ -62,6 +62,8 @@ class InitialSetup(BaseUtil):
     def initialSetup(self,  name=None,
                             email=None,
                             aliases=None,
+                            ignore=None,
+                            gitglobal=None,
                             subdir=None,
                             cfgfile=None,
                             forest=None,
@@ -70,8 +72,6 @@ class InitialSetup(BaseUtil):
                             wmsbase=None,
                             wmspath=None,
                     ):
-
-
 
         if name:
             self._cfg.userName = name
@@ -120,7 +120,11 @@ class InitialSetup(BaseUtil):
             self._cfg._aliases['user.name'] = self._cfg.userName
             self._cfg._aliases['user.email'] = self._cfg.userEmail
             self._cfg.customAliases.update(self._cfg._aliases)            
-            self.set_globals(self._cfg._aliases)
+            self.set_aliases(self._cfg._aliases, gitglobal=gitglobal)
+
+        if ignore:
+            if not self._cfg._ignore:
+                self._cfg._ignore = self._cfg.getDefaultIgnore()
+            self.set_ignore(self._cfg._ignore, gitglobal=gitglobal)
 
         self._cfg.writeToFile(cfgfile)
-        
