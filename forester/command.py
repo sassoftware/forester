@@ -222,3 +222,69 @@ class MergeCommand(PullCommand):
             logger.error("--branch is required")
             return False
         return True
+
+class CheckoutCommand(ForesterCommand):
+    NewBranch = False
+    commands = ['checkout']
+    help = 'Checkout a branch in a forest'
+    paramsHelp = '<forest> <branch>'
+    _options = ForesterCommand._options + [
+            ('cfgfile', options.ONE_PARAM, dict(help='Path to forestrc config file')),
+            ('ask', options.NO_PARAM, dict(help='Ask before cloning a git repo')),
+            ('readonly', options.NO_PARAM, dict(help='Do not mangle read only git repo uri')),
+            ]
+
+    requireConfig = True
+
+    def shouldRun(self):
+        if not self.forest:
+            logger.error('command requires a forest')
+            return False
+        if not self.branch:
+            logger.error('command requires a branch')
+            return False
+        return True
+
+    def runCommand(self, cfg, argSet, params, **kw):
+        self.cfg = cfg
+        self.cfgfile = argSet.pop('cfgfile', None)
+        self.ask = argSet.pop('ask', False)
+        self.readonly = argSet.pop('readonly', False)
+    
+        self.forest = params[2] if params[2:] else None
+        self.branch = params[3] if params[3:] else None
+
+        if self.NewBranch:
+            self.startPoint = params[4] if params[4:] else None
+        
+        if not self.shouldRun():
+            logger.error('%s will not run, exiting.', self.commands[0])
+            sys.exit(2)
+
+        try:
+            _skid = skidder.Skidder(forest = self.forest,
+                cfgfile= self.cfgfile,
+                base = None,
+                path = None,
+                ask=self.ask,
+                readonly=self.readonly,
+                test = False,
+                )
+        except skidder.InvalidForest:
+            logger.error("Forest %s is not defined", self.forest)
+            return
+        _skid.checkout(self.branch, newBranch=self.NewBranch, startPoint=self.startPoint)
+
+class BranchCommand(CheckoutCommand):
+    NewBranch = True
+    commands = ['branch']
+    help = 'Create a new branch in a forest'
+    paramsHelp = '<forest> <branch> [start-point]'
+    _options = ForesterCommand._options + [
+            ('cfgfile', options.ONE_PARAM, dict(help='Path to forestrc config file')),
+            ('ask', options.NO_PARAM, dict(help='Ask before cloning a git repo')),
+            ('readonly', options.NO_PARAM, dict(help='Do not mangle read only git repo uri')),
+            ]
+
+    requireConfig = True
+

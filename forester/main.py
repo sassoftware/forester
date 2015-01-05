@@ -46,6 +46,8 @@ class ForesterMain(mainhandler.MainHandler):
         command.PullCommand,
         command.MergeCommand,
         command.InitCommand,
+        command.CheckoutCommand,
+        command.BranchCommand,
         ]
 
     setSysExcepthook = False

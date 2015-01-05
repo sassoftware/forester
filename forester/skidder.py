@@ -3,6 +3,7 @@ import logging
 from forester import config
 from forester import controller
 from forester import gitmulticlone
+from forester import gitmulticheckout
 
 logger = logging.getLogger(__name__)
 
@@ -73,20 +74,21 @@ class Skidder(object):
             cfgFile = self.cfgfile
         self._cfg = config.ForesterConfiguration(config=cfgFile)
 
-    def findrepos(self):   
+    def findrepos(self, withExcludes = False):   
         repos = self.controller.findrepos()
         if 'ERROR' in repos:
             raise 
+        if withExcludes:
+            toRemove = set()
+            for repo in repos:
+                if repo.name in self.excludes:
+                    toRemove.add(repo)
+                    logger.debug("Excluding %s", repo.name)
+            repos.difference_update(toRemove)
         return repos
 
     def main(self, otherBranch, withPull=False, withPush=False):
-        reposet = self.findrepos()
-        toRemove = set()
-        for repo in reposet:
-            if repo.name in self.excludes:
-                toRemove.add(repo)
-                logger.debug("Excluding %s", repo.name)
-        reposet.difference_update(toRemove)
+        reposet = self.findrepos(withExcludes = True)
 
         _f = gitmulticlone.GitMultiClone(
                                     forestName = self.forest,
@@ -100,3 +102,19 @@ class Skidder(object):
                                     )
 
         _f.main(otherBranch, withPull=withPull, withPush=withPush)
+
+    def checkout(self, branch, newBranch=False, startPoint=None):
+        reposet = self.findrepos(withExcludes = True)
+
+        _f = gitmulticheckout.GitMultiCheckout(
+                                    forestName = self.forest,
+                                    repos = reposet,
+                                    subdir = self.subdir,
+                                    cachedir = self.cachedir, 
+                                    ask=self.ask,
+                                    readonly = self.readonly,
+                                    cfg = self._cfg,
+                                    test = self.test,
+                                    )
+
+        _f.main(branch, newBranch=newBranch, startPoint=startPoint)

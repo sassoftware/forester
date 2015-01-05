@@ -115,23 +115,24 @@ class GitCommands(object):
     def checkout(self, path, branch):
         '''
         cd path
-        git checkout -b <branch>
+        git checkout <branch>
         '''
-        cmd = ['git', 'checkout']
-        if branch:
-            cmd.extend(['-b' , branch])
+        cmd = ['git', 'checkout', branch]
         return self.run_git(cmd, path)
 
-    def branch(self, path, branch=None):
+    def branch(self, path, branch=None, startPoint=None):
         '''
+        cd path
         if branch is None
         gir branch
         else
-        git branch -b <branch>
+        git branch <branch> [startPoint]
         '''
         cmd = ['git', 'branch']
         if branch:
-            cmd.extend(['-b' , branch])
+            cmd.extend([branch])
+            if startPoint:
+                cmd.extend([startPoint])
         return self.run_git(cmd, path)
 
     def pull(self, path, branch=None, withPush=False):
