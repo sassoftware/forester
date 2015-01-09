@@ -256,6 +256,8 @@ class CheckoutCommand(ForesterCommand):
 
         if self.NewBranch:
             self.startPoint = params[4] if params[4:] else None
+        else:
+            self.startPoint = None
         
         if not self.shouldRun():
             logger.error('%s will not run, exiting.', self.commands[0])
