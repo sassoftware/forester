@@ -2,8 +2,7 @@ import logging
 
 from forester import config
 from forester import controller
-from forester import gitmulticlone
-from forester import gitmulticheckout
+from forester import gitmulticommand
 
 logger = logging.getLogger(__name__)
 
@@ -90,7 +89,7 @@ class Skidder(object):
     def main(self, otherBranch, withPull=False, withPush=False):
         reposet = self.findrepos(withExcludes = True)
 
-        _f = gitmulticlone.GitMultiClone(
+        _f = gitmulticommand.GitMultiClone(
                                     forestName = self.forest,
                                     repos = reposet,
                                     subdir = self.subdir,
@@ -101,12 +100,12 @@ class Skidder(object):
                                     test = self.test,
                                     )
 
-        _f.main(otherBranch, withPull=withPull, withPush=withPush)
+        _f.commandMultiple(otherBranch, withPull=withPull, withPush=withPush)
 
     def checkout(self, branch, newBranch=False, startPoint=None):
         reposet = self.findrepos(withExcludes = True)
 
-        _f = gitmulticheckout.GitMultiCheckout(
+        _f = gitmulticommand.GitMultiCheckout(
                                     forestName = self.forest,
                                     repos = reposet,
                                     subdir = self.subdir,
@@ -117,4 +116,19 @@ class Skidder(object):
                                     test = self.test,
                                     )
 
-        _f.main(branch, newBranch=newBranch, startPoint=startPoint)
+        _f.commandMultiple(branch, newBranch=newBranch, startPoint=startPoint)
+
+    def push(self, remote, refspec):
+        reposet = self.findrepos(withExcludes = True)
+
+        _f = gitmulticommand.GitMultiPush(
+                                    forestName = self.forest,
+                                    repos = reposet,
+                                    subdir = self.subdir,
+                                    cachedir = self.cachedir, 
+                                    ask = self.ask,
+                                    readonly = self.readonly,
+                                    cfg = self._cfg,
+                                    )
+
+        _f.commandMultiple(remote, refspec)

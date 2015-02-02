@@ -290,3 +290,49 @@ class BranchCommand(CheckoutCommand):
 
     requireConfig = True
 
+class PushCommand(ForesterCommand):
+    commands = ['push']
+    help = 'Push a local git forest to a remote repository'
+    paramsHelp = '<forest> <remote> [<refspec>...]'
+    _options = ForesterCommand._options + [
+            ('cfgfile', options.ONE_PARAM, dict(help='Path to forestrc config file')),
+            ('ask', options.NO_PARAM, dict(help='Ask before pushing a git repo')),
+            ('dry-run' , options.NO_PARAM, dict(help='List the head instead of pushing git repo')),
+            ('exclude' , options.MULT_PARAM, dict(help='Skip these repos')),
+            ]
+
+    requireConfig = True
+
+    def shouldRun(self):
+        if not self.forest:
+            logger.error('command requires a forest')
+            return False
+        if not self.remote:
+            logger.error('command requires a remote repository')
+            return False
+        return True
+
+    def runCommand(self, cfg, argSet, params, **kw):
+        self.cfg = cfg
+        self.cfgfile = argSet.pop('cfgfile', None)
+        self.excludes = argSet.pop('exclude', None)
+        self.ask = argSet.pop('ask', False)
+        self.test = argSet.pop('dry-run', False)
+    
+        self.forest = params[2] if params[2:] else None
+        self.remote = params[3] if params[3:] else 'origin'
+        self.refspec = params[4:]
+        
+        if not self.shouldRun():
+            logger.error('push will not run, exiting.')
+            sys.exit(2)
+
+        try:
+            _skid = skidder.Skidder(forest = self.forest,
+                cfgfile= self.cfgfile,
+                ask=self.ask,
+                )
+        except skidder.InvalidForest:
+            logger.error("Forest %s is not defined", self.forest)
+            return
+        _skid.push(self.remote, self.refspec)

@@ -45,6 +45,7 @@ class ForesterMain(mainhandler.MainHandler):
         command.CloneCommand,
         command.PullCommand,
         command.MergeCommand,
+        command.PushCommand,
         command.InitCommand,
         command.CheckoutCommand,
         command.BranchCommand,

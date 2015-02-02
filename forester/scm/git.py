@@ -124,9 +124,9 @@ class GitCommands(object):
         '''
         cd path
         if branch is None
-        gir branch
+            git branch
         else
-        git branch <branch> [startPoint]
+            git branch <branch> [startPoint]
         '''
         cmd = ['git', 'branch']
         if branch:
@@ -159,6 +159,17 @@ class GitCommands(object):
         cmd.append(uri)
         if clonedir:cmd.append(clonedir)
         log.info("%s", " ".join(cmd))
+        return self.run_git(cmd, path)
+
+    def push(self, path, remote, refspec):
+        '''
+        cd path
+        git push <remote> [<refspec>...]
+        '''
+        cmd = ['git', 'push', remote]
+
+        if refspec:
+            cmd.extend(refspec)
         return self.run_git(cmd, path)
 
 
