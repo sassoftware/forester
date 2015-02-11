@@ -105,7 +105,7 @@ class GitMultiPush(GitMultiCommand):
         local = self.manglePath(repo.path)
         remote = args[0]
         refspec = args[1]
-        cmd, args, kw = self.push, (local, remote, refspec), dict()
+        cmd, args, kw = self.push, (local, remote, refspec), dict(kwargs)
 
         try:
             cmd(*args, **kw)
@@ -122,11 +122,10 @@ class GitMultiCheckout(GitMultiCommand):
     def commandOne(self, repo, *args, **kwargs):
         local = self.manglePath(repo.path)
         branch = args[0]
-        newBranch = kwargs.pop('newBranch', False)
-        startPoint = kwargs.pop('startPoint', None)
+        newBranch = kwargs.pop('newBranch')
 
         if newBranch:
-            cmd, args, kw = self.branch, (local,), dict(branch=branch, startPoint=startPoint)
+            cmd, args, kw = self.branch, (local,), dict(kwargs, branch=branch)
         else:
             cmd, args, kw = self.checkout, (local,branch,), dict()
         try:

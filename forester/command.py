@@ -254,10 +254,12 @@ class CheckoutCommand(ForesterCommand):
         self.forest = params[2] if params[2:] else None
         self.branch = params[3] if params[3:] else None
 
+        kwargs = dict(newBranch = self.NewBranch)
+
         if self.NewBranch:
-            self.startPoint = params[4] if params[4:] else None
-        else:
-            self.startPoint = None
+            kwargs['startPoint'] = params[4] if params[4:] else None
+            # track upstream unless specifically disabled
+            kwargs['trackUpstream'] = 'no-set-upstream' not in argSet
         
         if not self.shouldRun():
             logger.error('%s will not run, exiting.', self.commands[0])
@@ -275,7 +277,7 @@ class CheckoutCommand(ForesterCommand):
         except skidder.InvalidForest:
             logger.error("Forest %s is not defined", self.forest)
             return
-        _skid.checkout(self.branch, newBranch=self.NewBranch, startPoint=self.startPoint)
+        _skid.checkout(self.branch, **kwargs)
 
 class BranchCommand(CheckoutCommand):
     NewBranch = True
@@ -286,6 +288,7 @@ class BranchCommand(CheckoutCommand):
             ('cfgfile', options.ONE_PARAM, dict(help='Path to forestrc config file')),
             ('ask', options.NO_PARAM, dict(help='Ask before cloning a git repo')),
             ('readonly', options.NO_PARAM, dict(help='Do not mangle read only git repo uri')),
+            ('no-set-upstream', options.NO_PARAM, dict(help='Do not set up "upstream" configuration')),
             ]
 
     requireConfig = True
@@ -299,6 +302,7 @@ class PushCommand(ForesterCommand):
             ('ask', options.NO_PARAM, dict(help='Ask before pushing a git repo')),
             ('dry-run' , options.NO_PARAM, dict(help='List the head instead of pushing git repo')),
             ('exclude' , options.MULT_PARAM, dict(help='Skip these repos')),
+            ('no-set-upstream', options.NO_PARAM, dict(help='Do not set up "upstream" configuration')),
             ]
 
     requireConfig = True
@@ -323,6 +327,9 @@ class PushCommand(ForesterCommand):
         self.remote = params[3] if params[3:] else 'origin'
         self.refspec = params[4:]
         
+        kwargs = dict()
+        kwargs['trackUpstream'] = 'no-set-upstream' not in argSet
+
         if not self.shouldRun():
             logger.error('push will not run, exiting.')
             sys.exit(2)
@@ -335,4 +342,4 @@ class PushCommand(ForesterCommand):
         except skidder.InvalidForest:
             logger.error("Forest %s is not defined", self.forest)
             return
-        _skid.push(self.remote, self.refspec)
+        _skid.push(self.remote, self.refspec, **kwargs)

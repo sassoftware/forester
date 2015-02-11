@@ -102,7 +102,7 @@ class Skidder(object):
 
         _f.commandMultiple(otherBranch, withPull=withPull, withPush=withPush)
 
-    def checkout(self, branch, newBranch=False, startPoint=None):
+    def checkout(self, branch, **kwargs):
         reposet = self.findrepos(withExcludes = True)
 
         _f = gitmulticommand.GitMultiCheckout(
@@ -116,9 +116,9 @@ class Skidder(object):
                                     test = self.test,
                                     )
 
-        _f.commandMultiple(branch, newBranch=newBranch, startPoint=startPoint)
+        _f.commandMultiple(branch, **kwargs)
 
-    def push(self, remote, refspec):
+    def push(self, remote, refspec, **kwargs):
         reposet = self.findrepos(withExcludes = True)
 
         _f = gitmulticommand.GitMultiPush(
@@ -131,4 +131,4 @@ class Skidder(object):
                                     cfg = self._cfg,
                                     )
 
-        _f.commandMultiple(remote, refspec)
+        _f.commandMultiple(remote, refspec, **kwargs)

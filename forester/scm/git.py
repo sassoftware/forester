@@ -120,19 +120,22 @@ class GitCommands(object):
         cmd = ['git', 'checkout', branch]
         return self.run_git(cmd, path)
 
-    def branch(self, path, branch=None, startPoint=None):
+    def branch(self, path, branch=None, startPoint=None, trackUpstream=False):
         '''
         cd path
         if branch is None
             git branch
         else
-            git branch <branch> [startPoint]
+            git branch --set-upstream <branch> [startPoint]
         '''
         cmd = ['git', 'branch']
         if branch:
-            cmd.extend([branch])
+            if trackUpstream:
+                cmd.append('--set-upstream')
+            cmd.append(branch)
             if startPoint:
-                cmd.extend([startPoint])
+                cmd.append(startPoint)
+                
         return self.run_git(cmd, path)
 
     def pull(self, path, branch=None, withPush=False):
@@ -161,13 +164,16 @@ class GitCommands(object):
         log.info("%s", " ".join(cmd))
         return self.run_git(cmd, path)
 
-    def push(self, path, remote, refspec):
+    def push(self, path, remote, refspec, trackUpstream=False):
         '''
         cd path
-        git push <remote> [<refspec>...]
+        git push --set-upstream <remote> [<refspec>...]
         '''
-        cmd = ['git', 'push', remote]
+        cmd = ['git', 'push', ]
 
+        if trackUpstream:
+            cmd.append('--set-upstream')
+        cmd.append(remote)
         if refspec:
             cmd.extend(refspec)
         return self.run_git(cmd, path)
