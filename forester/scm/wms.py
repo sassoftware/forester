@@ -76,7 +76,7 @@ class WmsRepository(scm.ScmRepository):
     def parseRevisionsLine(self, fl):
         path, branch, head = fl.split()
         silo, subpath = path.split('/', 1)
-        name = subpath.split('/')[-1]
+        name = self._quote(subpath)
         pathq = self._quote(silo) + '/' + self._quote(subpath)
         repos = self.base + '/api/repos/' + pathq
         poll = repos + '/poll/' + self._quote(branch)
