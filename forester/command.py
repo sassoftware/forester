@@ -150,7 +150,7 @@ class CloneCommand(ForesterCommand):
     WithPush = False
     commands = ['clone']
     help = 'Clone git forest from a control source'
-    paramsHelp = '[forest]...'
+    paramHelp = '[forest]...'
     _options = ForesterCommand._options + [
             ('cfgfile', options.ONE_PARAM, dict(help='Path to forestrc config file')),
             ('ask', options.NO_PARAM, dict(help='Ask before cloning a git repo')),
@@ -204,13 +204,13 @@ class PullCommand(CloneCommand):
     WithPull = True
     commands = ['pull']
     help = 'Pull git forest from a control source'
-    paramsHelp = '[forest]...'
+    paramHelp = '[forest]...'
 
 class MergeCommand(PullCommand):
     WithPush = True
     commands = ['merge']
     help = 'Merge git forest with branch'
-    paramsHelp = '[forest]...'
+    paramHelp = '[forest]...'
     _options = PullCommand._options + [
             ('branch', options.ONE_PARAM, dict(help='Branch to merge with')),
             ]
@@ -227,7 +227,7 @@ class CheckoutCommand(ForesterCommand):
     NewBranch = False
     commands = ['checkout']
     help = 'Checkout a branch in a forest'
-    paramsHelp = '<forest> <branch>'
+    paramHelp = '<forest> <branch>'
     _options = ForesterCommand._options + [
             ('cfgfile', options.ONE_PARAM, dict(help='Path to forestrc config file')),
             ('ask', options.NO_PARAM, dict(help='Ask before cloning a git repo')),
@@ -283,7 +283,8 @@ class BranchCommand(CheckoutCommand):
     NewBranch = True
     commands = ['branch']
     help = 'Create a new branch in a forest'
-    paramsHelp = '<forest> <branch> [start-point]'
+    #paramHelp = '<forest> <branch> [start-point]'
+    paramHelp = '<forest> <branch> [start-point]'
     _options = ForesterCommand._options + [
             ('cfgfile', options.ONE_PARAM, dict(help='Path to forestrc config file')),
             ('ask', options.NO_PARAM, dict(help='Ask before cloning a git repo')),
@@ -296,7 +297,7 @@ class BranchCommand(CheckoutCommand):
 class PushCommand(ForesterCommand):
     commands = ['push']
     help = 'Push a local git forest to a remote repository'
-    paramsHelp = '<forest> <remote> [<refspec>...]'
+    paramHelp = '<forest> <remote> [<refspec>...]'
     _options = ForesterCommand._options + [
             ('cfgfile', options.ONE_PARAM, dict(help='Path to forestrc config file')),
             ('ask', options.NO_PARAM, dict(help='Ask before pushing a git repo')),
