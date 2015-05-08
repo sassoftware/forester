@@ -38,14 +38,24 @@ class GitMultiCommand(git.GitCommands):
         return False
 
     def mangleUri(self, uri):
-        if not self.readonly and self.isReadOnly(uri):
-            url = urlparse.urlparse(uri)
-            netloc = url.netloc
-            if url.netloc in self._cfg.gitUserMap:
-                netloc = ''.join([self._cfg.gitUserMap.get(url.netloc), '@',  url.netloc])  
+        if self.readonly: return uri
+        url = urlparse.urlparse(uri)
+        netloc = url.netloc
+        # Strip off username and port
+        fqdn = url.netloc.split('@')[-1].split(':')[0]
+        # FIXME 
+        # This is making the assumption that since your uri contains a username
+        # You know what they are doing. Probably should log this for debugging
+        # when it all goes south...
+        if fqdn in self._cfg.gitUserMap and url.username is None:
+            netloc = ''.join([self._cfg.gitUserMap.get(fqdn), '@',  url.netloc])  
+        if self.isReadOnly(uri): 
+            # FIXME
+            # HACK FOR SCC URLS
+            logger.debug('READ ONLY')
             if url.scheme == 'git':
-                uri = '/'.join(['ssh:/', netloc, 'git', url.path[1:]])
-        return uri
+                return '/'.join(['ssh:/', netloc, 'git', url.path[1:]])
+        return '/'.join([url.scheme + ':/', netloc, url.path[1:]])
 
     def manglePath(self, path):
         silo, _, rest = path.partition('/')
