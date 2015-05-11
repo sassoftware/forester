@@ -50,6 +50,8 @@ class HelpCommand(ForesterCommand):
     commands = ['help']
     help = 'Display help information'
 
+    description = '''Usage: forester help <command>\n\nClone multiple Git Repos from a single source file. Yet another "for" loop for git. Currently Git Forest must be managed in WMS .\n\nOptions:\n'''
+
     def runCommand(self, cfg, argSet, args, **kwargs):
         command, subCommands = self.requireParameters(args, allowExtra=True)
         if subCommands:
@@ -61,8 +63,8 @@ class HelpCommand(ForesterCommand):
                 sys.exit(1)
             print >> sys.stderr, commands[command].usage()
         else:
+            print >> sys.stderr, self.description
             print >> sys.stderr, self.mainHandler.usage()
-
 
 class ConfigCommand(ForesterCommand):
     commands = ['config']

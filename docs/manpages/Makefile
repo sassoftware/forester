@@ -1,5 +1,5 @@
 
-SUBCOMMANDS=clone config init merge pull
+SUBCOMMANDS=clone checkout config init merge pull push branch
 
 .PHONY: all clean rm_phony_commands phony_commands troff 
 
@@ -26,10 +26,10 @@ phony_commands:
 	done
 
 troff: phony_commands
-	help2man --no-info --include=forester.help2man --name="manage a forest of git trees" \
+	help2man --no-info --include=forester.help2man --include=forester-common.help2man --name="manage a forest of git trees" \
 	    ./forester > forester.1
 	for subcommand in $(SUBCOMMANDS); do \
-	     help2man --no-info --include=forester.help2man \
+	     help2man --no-info --include=forester-common.help2man \
 	     	--opt-include=forester-$$subcommand.help2man ./forester-$$subcommand \
 		> forester-$$subcommand.1; \
 	done

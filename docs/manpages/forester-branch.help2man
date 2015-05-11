@@ -1,0 +1,25 @@
+[name]
+forester-branch - Create a branch in a forest
+
+[examples]
+.P
+Create a new local branch from an existing remote branch, tracking upstream
+
+\fBforester branch --verbose appengine master gerrit/master\fR
+
+Create a new local branch from an existing remote branch, but don't track upstream
+
+\fBforester branch --verbose --no-set-upstream appengine master gerrit/master\fR
+
+Create a new local branch from the current HEAD in each repository
+
+\fBforester branch --verbose appengine featureXYZ\fR
+
+Create a new local branch from a given start point (tag or relative commit)
+
+\fBforester branch --verbose appengine featureXYZ a_tag\fR
+
+\fBforester branch --verbose appengine featureXYZ HEAD^3\fR
+
+Note that you can't use a commit as a start point, as the commit won't exist in all repositories.
+

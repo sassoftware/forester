@@ -1,11 +1,21 @@
+[description]
+Clone multiple Git Repos from a single source file. Yet another "for" loop for git. Currently Git Forest must be managed in WMS.
+
 [seealso]
 forester help <subcommand>
-
-[bugs]
-file issues or bugs https://opensource.sas.com/its
-
-[authors]
-forester was written by SAS http://www.sas.com/
-
-[copyright]
-Copyright (c) SAS Institute Inc.
+.TP
+\fIforester\-init\fP(1)
+.TP
+\fIforester\-merge\fP(1)
+.TP
+\fIforester\-config\fP(1)
+.TP
+\fIforester\-pull\fP(1)
+.TP
+\fIforester\-checkout\fP(1)
+.TP
+\fIforester\-branch\fP(1)
+.TP
+\fIforester\-push\fP(1)
+.TP
+\fIforester\-clone\fP(1)

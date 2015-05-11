@@ -1,2 +1,5 @@
 [name]
 forester-clone - Clone git forest from a control source
+
+[examples]
+\fIforester clone myforestname\fP

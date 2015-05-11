@@ -1,2 +1,16 @@
 [name]
 forester-init - Init working directories
+
+[examples]
+.P
+To create the initial config it is easiest to use the init command.
+
+The init command is non-destructive for forests and will read your current config so you can use it to add more forests.
+
+Run the init command to generate the initial ~/.foresterrc and set some common git aliases.
+
+\fBforester init --branch bar --email foo@bar.com --name "Joe Foo" --wms --wmsbase http://foo.bar.com --wmspath silo/path --subdir ~/git --forest foo --common-aliases\fR
+
+Running it a second time with a different forest will add to the config.
+
+\fBforester init --branch bar --wms --wmsbase http://foo.bar.com --wmspath silo/path --subdir ~/git --forest foo\fR
