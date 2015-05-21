@@ -108,6 +108,11 @@ class InitCommand(ForesterCommand):
         if not self.name and not self.subdir:
             logger.error('init command requires at least one --name or one --subdir')
             return False
+        if self.wms and not(self.wmsbase and self.wmspath):
+            logger.error('init command with --wms option requires' 
+                    ' both --wmsbase and --wmspath options')
+            return False
+
         return True
 
     def runCommand(self, cfg, argSet, params, **kw):
