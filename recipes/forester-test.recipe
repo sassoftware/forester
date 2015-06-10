@@ -26,7 +26,6 @@ class ForesterTest(TestPackageRecipe):
     testsuite = "testsuite.py"
 
     buildRequires = [
-        'python-mock',
         'forester',
         ]
 
