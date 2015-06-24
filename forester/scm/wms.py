@@ -3,6 +3,7 @@ import urllib2
 import requests
 
 from forester import scm
+from forester import errors
 
 import logging
 
@@ -39,10 +40,14 @@ class WmsRepository(scm.ScmRepository):
         return [ 'ERROR', req.status_code ]
 
     def fetch(self, uri):
-        req = requests.get(uri)
-        if req.ok:
-            return req.text
-        return req.status_code
+        resp = requests.get(uri)
+
+        try:
+            resp.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            raise errors.ForesterWmsError(resp.url, resp.status_code, exception=e)
+
+        return resp.text
 
     def _getTip(self):
         result = self.fetchlines(self.poll)

@@ -44,6 +44,17 @@ class ForesterBranchError(ForesterError):
 class ForesterGrouperError(ForesterError):
     msg = "ERROR: Group %s failed to build because name was not specified in cfgfile or at cmdline"
 
+class ForesterWmsError(ForesterError):
+    msg = "WMS Error: %s"
+    def __init__(self, url, status_code, exception=None):
+        super(ForesterWmsError, self).__init__(exception)
+        self.url = url
+        self.status_code = status_code
+
+    def __str__(self):
+        return self.msg % "{status_code} returned from\n    {url}".format(
+                url=self.url, status_code=self.status_code)
+
 class ForesterScmError(ForesterError):
     msg = "Source Control Management Error: %s"
     def __init__(self, retcode, stdout, stderr, exception=None):
