@@ -1,6 +1,6 @@
 Forester
 ========
-
+ 
 Overview
 --------
 Manage multiple Git repositories from a single source file
