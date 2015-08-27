@@ -13,7 +13,7 @@ forester needs conary so it is probably best to use a Sandbox Developers Image t
 ==Getting  Started==
 
 * Grab conary package 
-** forester=newton.eng.rpath.com@sas:build-tools-master
+** forester=faraday.cny.sas.com@sas:build-tools-master
 * Alternative: Clone the source
 ** make && sudo make install 
 * Create a config file
@@ -22,7 +22,7 @@ forester needs conary so it is probably best to use a Sandbox Developers Image t
 ===Install Forester===
 
 <source lang=bash>
-conary install forester=newton.eng.rpath.com@sas:build-tools-master
+conary install forester=faraday.cny.sas.com@sas:build-tools-master
 </source>
 
 ===Clone the source===
@@ -184,7 +184,7 @@ forester init --branch master --wms --wmsbase http://wheresmystuff.unx.sas.com -
 Add appengine forest to config
 
 <pre>
-forester init --branch master --wms --wmsbase http://wheresmystuff.unx.sas.com --wmspath scc/appengine --subdir ~/gittest --forest appengine
+forester init --branch master --wms --wmsbase http://wheresmystuff.unx.sas.com --wmspath gerrit-ptd/appengine/appengine --subdir ~/gittest --forest appengine
 </pre>
 
 Add vdk forest to config
@@ -196,7 +196,7 @@ forester init --branch master --wms --wmsbase http://wheresmystuff.unx.sas.com -
 Add build-tools forest to config
 
 <pre>
-forester init --branch master --wms --wmsbase http://wheresmystuff.unx.sas.com --wmspath scc/build-tools --subdir ~/gittest --forest build-tools
+forester init --branch master --wms --wmsbase http://wheresmystuff.unx.sas.com --wmspath gerrit-pdt/tools/build-tools --subdir ~/gittest --forest build-tools
 </pre>
 
 
